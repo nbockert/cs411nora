@@ -13,18 +13,18 @@
 
 function getInput(){
   const current = prompt("Enter in your current location (EX. '841 broadway, new york, ny'):");
-  console.log(current);
   geocodes(current);
+  const final = prompt("Enter in your destination (EX. '841 broadway, new york, ny'):");
+  geocodes_loc(final);
 } 
 
 function geocodes(address){
-  Radar.initialize('api_key');
+  Radar.initialize('apikey');
   Radar.forwardGeocode({query:address})
   .then((result) => {
     console.log(result);
     home_latitude = result.addresses[0].latitude;
     home_longitude = result.addresses[0].longitude;
-    getPlaces(home_latitude,home_longitude);
     // do something with addresses
   })
   .catch((err) => {
@@ -33,17 +33,31 @@ function geocodes(address){
   });
 
 }
-function getPlaces(lat,long){
-  const key = 'api_key';
+function geocodes_loc(address){
+  Radar.initialize('apikey');
+  Radar.forwardGeocode({query:address})
+  .then((result) => {
+    console.log(result);
+    dest_latitude = result.addresses[0].latitude;
+    dest_longitude = result.addresses[0].longitude;
+    getPlaces(home_latitude,home_longitude,dest_latitude,dest_longitude);
+    // do something with addresses
+  })
+  .catch((err) => {
+    // handle error
+    console.error(err);
+  });
+}
+function getPlaces(lat,long,lat1,long1){
   const nu = prompt("How many places do you want to search for?:");
   let num = parseInt(nu);
-  fetch('https://api.geoapify.com/v2/places?categories='+string+'&bias=proximity:'+long+','+lat+'&limit='+num+'&apiKey={apikey}')
+  fetch('https://api.geoapify.com/v2/places?categories='+string+'&filter=rect:'+long+','+lat+','+long1+','+lat1+'&bias=proximity:'+long+','+lat+'&limit='+num+'&apiKey=apikey')
   .then(resp => resp.json())
     .then((places) => {
       for(let i=0; i< num; i++){
-        console.log(places.name);
-        const placeHTML = getAddressHTML(places.features[i]);
-          document.getElementById('addressContainer').innerHTML += placeHTML;
+        const placeHTML = getAddressHTML(places.features[i],i);
+        document.getElementById('addressContainer').innerHTML += placeHTML;
+          
       }
       
     });
@@ -51,11 +65,11 @@ function getPlaces(lat,long){
 }
 function edu_library(){
   if(string==""){
-    string += 'education.library,building.university';
+    string = 'education.library,building.university';
     console.log(string);
   }
   else{
-    string += ',education.library,building.university';
+    string = 'education.library,building.university';
     console.log(string);
   }
 
@@ -73,11 +87,11 @@ function natural(){
 }
 function cafe(){
   if(string==""){
-    string +='commercial.food_and_drink.coffee_and_tea';
+    string ='commercial.food_and_drink.coffee_and_tea';
     console.log(string);
   }
   else{
-    string +=',commercial.food_and_drink.coffee_and_tea';
+    string ='commercial.food_and_drink.coffee_and_tea';
     console.log(string);
   }
 
@@ -101,8 +115,8 @@ function entertain(){
   console.log(string);
 
 }
-
-function getAddressHTML(place) {
+//create an event listner wherever you call that function 
+function getAddressHTML(place,i) {
   const {
     name,
     address_line1,
@@ -116,18 +130,18 @@ function getAddressHTML(place) {
     directions(lon,lat);
     return `
     <div>
-      <h3>${name}</h3>
-      <p>${address_line1}</p>
+      <button id="${i}" role="button" onclick="search_results('${address_line1}, ${city}, ${state}')">${name}</button>
+      <p id="address">${address_line1}</p>
       <p>${city}, ${state}, ${country}</p>
     </div>
   `;
+  
 
   }
 
 }
 
 function directions(long,lat){
-  const mapbox_key = 'api_key';
   fetch('https://api.mapbox.com/directions/v5/mapbox/walking/'+home_longitude+','+home_latitude+';'+long+','+lat+'?access_token='+mapbox_key)
     .then((response) => {
       if (!response.ok) {
@@ -180,10 +194,6 @@ touristy.addEventListener('click', tourism);
 const enter = document.getElementById('entertainment');
 enter.addEventListener('click', entertain);
 
-function search_results(){
-
-}
 
 
-//const key = 'b83f31c7f9354a45a735c68402debc71';
 
