@@ -19,7 +19,7 @@ function getInput(){
 } 
 
 function geocodes(address){
-  Radar.initialize('apikey');
+  Radar.initialize('api_key');
   Radar.forwardGeocode({query:address})
   .then((result) => {
     console.log(result);
@@ -34,7 +34,7 @@ function geocodes(address){
 
 }
 function geocodes_loc(address){
-  Radar.initialize('apikey');
+  Radar.initialize('api_key');
   Radar.forwardGeocode({query:address})
   .then((result) => {
     console.log(result);
@@ -51,13 +51,12 @@ function geocodes_loc(address){
 function getPlaces(lat,long,lat1,long1){
   const nu = prompt("How many places do you want to search for?:");
   let num = parseInt(nu);
-  fetch('https://api.geoapify.com/v2/places?categories='+string+'&filter=rect:'+long+','+lat+','+long1+','+lat1+'&bias=proximity:'+long+','+lat+'&limit='+num+'&apiKey=apikey')
+  fetch('https://api.geoapify.com/v2/places?categories='+string+'&filter=rect:'+long+','+lat+','+long1+','+lat1+'&bias=proximity:'+long+','+lat+'&limit='+num+'&apiKey=api_key')
   .then(resp => resp.json())
     .then((places) => {
       for(let i=0; i< num; i++){
         const placeHTML = getAddressHTML(places.features[i],i);
         document.getElementById('addressContainer').innerHTML += placeHTML;
-          
       }
       
     });
@@ -75,26 +74,18 @@ function edu_library(){
 
 }
 function natural(){
-  if(string==""){
-    string = 'natural.protected_area';
-    console.log(string);
-  }
-  else{
-    string = 'natural.protected_area';
-    console.log(string);
-  }
+  string='natural';
+  console.log(string);
 
 }
 function cafe(){
-  if(string==""){
-    string ='commercial.food_and_drink.coffee_and_tea';
-    console.log(string);
-  }
-  else{
-    string ='commercial.food_and_drink.coffee_and_tea';
-    console.log(string);
-  }
+  string ='commercial.food_and_drink.coffee_and_tea,commercial.food_and_drink.bakery,catering.cafe.coffee_shop';
+  console.log(string);
 
+}
+function restaurant(){
+  string= 'catering.restaurant';
+  console.log(string);
 }
 
 function tourism(){
@@ -115,6 +106,12 @@ function entertain(){
   console.log(string);
 
 }
+
+function groc(){
+  string = "commercial.supermarket";
+  console.log(string);
+
+}
 //create an event listner wherever you call that function 
 function getAddressHTML(place,i) {
   const {
@@ -126,6 +123,9 @@ function getAddressHTML(place,i) {
     lat,
     lon,
   } = place.properties;
+  if(name=="undefined"){
+    return false;
+  }
   if(arraybool(name)){
     directions(lon,lat);
     return `
@@ -142,6 +142,7 @@ function getAddressHTML(place,i) {
 }
 
 function directions(long,lat){
+  const mapbox_key = 'api_key';
   fetch('https://api.mapbox.com/directions/v5/mapbox/walking/'+home_longitude+','+home_latitude+';'+long+','+lat+'?access_token='+mapbox_key)
     .then((response) => {
       if (!response.ok) {
@@ -163,6 +164,9 @@ function directions(long,lat){
 
 function arraybool(name){
   console.log(array);
+  if(name=="undefined"){
+    return false;
+  }
   if(!array.includes(name)){
     array.push(name);
     return true;
@@ -170,8 +174,8 @@ function arraybool(name){
   else{
     return false;
   }
-
 }
+
 
 
 
@@ -193,6 +197,16 @@ touristy.addEventListener('click', tourism);
 
 const enter = document.getElementById('entertainment');
 enter.addEventListener('click', entertain);
+
+const rest = document.getElementById('rest');
+rest.addEventListener('click',restaurant);
+
+const tree = document.getElementById('nate');
+tree.addEventListener('click',natural);
+
+const sup = document.getElementById('super');
+sup.addEventListener('click',groc);
+
 
 
 
