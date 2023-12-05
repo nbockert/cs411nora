@@ -8,7 +8,11 @@
     <script src="demo.js" defer></script>
 </head>
 <body>
-    <div>
+    <div class="blue-bar">
+        <h5> <img id="logo" src="logo.png" height="60dp" width="auto"><br></h5>
+    </div>
+    <div class="box"></div>
+    <div class="loc-buttons">
         <button id="edu" class="button-17" role="button"><span class="text">Library</span></button>
         <button id ="nat" class="button-17" role="button"><span class="text">Park</span></button>
         <button id="tea" class="button-17" role="button"><span class="text">Cafe</span></button>
@@ -17,6 +21,7 @@
     </div>
     <button id="loco" class="button-40" role="button"><span class="text">Generate Places!</span></button>
     <div id="addressContainer"></div>
+
     <script>
           function search_results(place){
             console.log(place)
